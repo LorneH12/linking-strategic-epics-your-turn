@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Your turn: push a Feature to Jira · Amex ETS tools training</title>
@@ -69,18 +69,27 @@
 
   <!-- the review: what has been learned -->
   <section id="review" class="review" hidden>
-    <h2 id="review-title">What you learned</h2>
+    <h2 id="review-title" tabindex="-1">What you learned</h2>
+    <p id="review-note" hidden></p>
     <ol id="review-points" class="review-points"></ol>
+    <details class="resource-list"><summary>Resources</summary>
+      <div class="resource-actions">
+        <button id="review-film">Full walkthrough · 3:57</button>
+        <small>Draft resource — further revision needed</small>
+        <button id="review-explainer">Focused explainer · 0:39</button>
+        <a href="notices/ASSET-NOTICES.txt" target="_blank" rel="noopener">Asset credits</a>
+      </div>
+    </details>
     <div class="row">
-      <button id="review-film">Watch the full film again</button>
-      <button id="review-explainer">Replay the explainer</button>
-      <button id="review-again" class="primary">Try the activity again</button>
+      <button id="complete-training" class="primary">Finish training</button>
+      <button id="review-again">Try the activity again</button>
     </div>
   </section>
 
   <div class="panel-tools step-body" hidden>
     <button id="clue" title="Clue (C)">Clue</button>
     <button id="walk">Walk me through</button>
+    <button id="practice-options">Options</button>
   </div>
 </aside>
 
@@ -92,12 +101,13 @@
   <button id="go-monitor" aria-pressed="true">Monitor</button>
   <button id="go-laptop" aria-pressed="false">Laptop</button>
   <button id="go-room">Room</button>
+  <button id="inspect-screen">Inspect</button>
   <span class="drag-hint">Drag to look around</span>
 </nav>
 
 <!-- THE JOURNEY: film (landing) → explainer → your turn → review. The office loads behind it. -->
 <section id="journey" class="journey" aria-label="Training">
-  <ol id="stages" class="stages"></ol>
+  <ol id="stages" class="stages" aria-label="Training progress"></ol>
   <!-- the cover: a website-style hero (words in steps.js › JOURNEY.landing) -->
   <div id="landing" class="landing">
     <img id="hero-image" class="hero-image" alt="">
@@ -106,27 +116,50 @@
       <span id="hero-brand" class="hero-brand"></span>
     </header>
     <div class="hero-copy">
-      <p id="landing-eyebrow" class="eyebrow"></p>
       <h1 id="landing-title"></h1>
       <p id="landing-text" class="lede"></p>
       <div class="row hero-actions">
-        <button id="start-film" class="primary hero-cta"><span class="play" aria-hidden="true"></span>Start the training</button>
-        <button id="skip-to-explainer" class="hero-secondary">Skip to the 39-second explainer</button>
+        <button id="start-film" class="primary hero-cta">Start now</button>
       </div>
-      <ul id="hero-meta" class="hero-meta" aria-label="About this training"></ul>
     </div>
-    <ol id="hero-parts" class="hero-parts" aria-label="The four parts"></ol>
-    <p id="hero-footnote" class="hero-footnote"></p>
   </div>
+  <section id="practice-entry" class="practice-entry" hidden aria-labelledby="entry-title">
+    <p class="eyebrow">Your turn</p>
+    <h1 id="entry-title" tabindex="-1">Put the link into practice.</h1>
+    <p>Push a Feature to Jira, then try linking one that already exists.</p>
+    <button id="enter-practice" class="primary">Jump into practice</button>
+    <details class="learning-options"><summary>See how it works first</summary>
+      <div class="resource-actions">
+        <button id="entry-walkthrough">Walk me through</button>
+        <button id="entry-explainer">Watch the short explainer · 0:39</button>
+      </div>
+    </details>
+    <details class="entry-resources"><summary>Resources</summary>
+      <div class="resource-actions"><button id="entry-film">Full walkthrough · 3:57</button><small>Draft resource — further revision needed</small></div>
+    </details>
+  </section>
+  <section id="completion" class="completion" hidden aria-labelledby="completion-title">
+    <p class="eyebrow">Training complete</p>
+    <h1 id="completion-title" tabindex="-1">Thank you.</h1>
+    <p id="completion-text"></p>
+    <button id="back-to-conclusion">Back to conclusion &amp; resources</button>
+  </section>
   <div id="player" class="player" hidden>
     <p id="player-note" class="player-note"></p>
-    <video id="journey-video" controls playsinline crossorigin="anonymous"></video>
+    <video id="journey-video" controls playsinline preload="metadata" crossorigin="anonymous"></video>
+    <p id="video-error" role="alert" hidden>The video could not load. Check your connection, then retry or open it directly.</p>
+    <div id="video-recovery" class="row" hidden><button id="retry-video">Retry video</button><a id="video-direct" target="_blank" rel="noopener">Open video in a new tab</a></div>
     <div class="row player-row">
       <button id="journey-skip"></button>
     </div>
   </div>
 </section>
 
+<dialog id="screen-detail" class="screen-detail" aria-labelledby="detail-title">
+  <div class="detail-header"><h2 id="detail-title">Screen detail</h2><form method="dialog"><button>Close</button></form></div>
+  <p>Scroll to read the demonstration screen. Your practice stays in place.</p>
+  <div class="detail-scroll" tabindex="0" aria-label="Scrollable demonstration screen"><img id="detail-image" alt=""></div>
+</dialog>
 <div id="announce" class="sr-only" aria-live="polite"></div>
 <script type="module" src="activity.js"></script>
 </body>

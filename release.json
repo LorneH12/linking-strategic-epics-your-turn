@@ -1,0 +1,245 @@
+{
+  "releaseId": "1793597695356",
+  "files": [
+    {
+      "path": ".nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/activity.css",
+      "bytes": 14683,
+      "sha256": "3b523120fef5cad52ada3056518ee2a13536b1393a08db53dfaf3ba73de23aff"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/activity.js",
+      "bytes": 28078,
+      "sha256": "0b7b233fb0cb2dcbaeb73d4937d6f8dd4b196a004baf04c659213b116a7263fc"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/images/hero-room.jpg",
+      "bytes": 238441,
+      "sha256": "25e1c2843ec4cf83165ffddbf63cf5f369f3abed49a3d8235cd16a6a3828626e"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/index.html",
+      "bytes": 8025,
+      "sha256": "391540db07fb749b1c7a36846c9b6015204e4e263d77384edd0cf8540cc94fde"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/notices/ASSET-NOTICES.txt",
+      "bytes": 1146,
+      "sha256": "df0a9c931bb9270529af54f5ddea6afbf55116162f6e2f54cf96294a0d993ed0"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/notices/Manrope-OFL.txt",
+      "bytes": 4480,
+      "sha256": "4b8929f05a122b7abb9059501dc7dc4df86f8c97d5a1769d60d82cf2d2795dde"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/notices/THREE-LICENSE.txt",
+      "bytes": 1102,
+      "sha256": "df2a91696186fe58c92518a25d48bc59c8ee2edc7cac9ca6d19a5a0d599a2a05"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/screens.js",
+      "bytes": 5925,
+      "sha256": "aed16649ac92e5d4bf6db66a38f89520aba3f93f49d815c9cbd0ecb3b71d255b"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/activity/steps.js",
+      "bytes": 16871,
+      "sha256": "40fd45c2d6e0c19257a0a153920d051e8724a62eccdf69d9f270d593f08ae66e"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/explainer/explainer-web.mp4",
+      "bytes": 8357721,
+      "sha256": "bfffa42a6a8bf7c38d82be17f7eb7ce7eb102c3b5336416c4c23d91189d6da22"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/branding/amex-bluebox-hires.svg",
+      "bytes": 3263,
+      "sha256": "6b5eefa5ef221baab3e71c5bdb8007dfe2e2d74bd4f07a37724fe4c6a002397b"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/city.js",
+      "bytes": 2436,
+      "sha256": "1f3833570658deff8d52c74356f845a7f03d7beefb84380a542f704422a9ca31"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/district.js",
+      "bytes": 13905,
+      "sha256": "68f1d844533ac54a67ab399e01f5a6fb0d2fd9ab309bf5ce016b06785bd9c24a"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/lighting.js",
+      "bytes": 3765,
+      "sha256": "676c6b9e291e7e1bc9b164a7c1cf70fc70cd48ddcf144cbecef93a707ddaaedd"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/materials/stone-normal.png",
+      "bytes": 178655,
+      "sha256": "bd4accd90d941d9078d38bc110f2acccc18e2a1f9593452719ad82bdb2354013"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/materials/stone-roughness.png",
+      "bytes": 228826,
+      "sha256": "19251fcbca009a852f35d3995475c9225b0a9f6a683d3d7586a8c2526bb176a1"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/materials/woven-normal.png",
+      "bytes": 3133,
+      "sha256": "6b3aa2745761804cb36f334b69eddc1b164e748fa9cc10d822d6108ffe8f8802"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/objects.js",
+      "bytes": 10440,
+      "sha256": "7717affa4653671387f9c0819a5d5b2e08ef645fd7d4289f9dc00e3b2a847462"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/office.js",
+      "bytes": 5070,
+      "sha256": "4d210e27a0de2d50a4dc981c6fed5e1e7de4e0fc57778d4afcefa324411d4086"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/room.js",
+      "bytes": 17101,
+      "sha256": "084f1f3d3977fa5dda60c8a62c7710f94c2259fef0e0ad9fd7754d231d31afae"
+    },
+    {
+      "path": "assets/alternatives/amex-enterprise/room/screen-camera.js",
+      "bytes": 4982,
+      "sha256": "fe40223c5614bd0b3ccb84a7f3bdd1dfe6293ba4956bb74e0963e6ef1a9f341c"
+    },
+    {
+      "path": "assets/fonts/Manrope-ExtraBold.ttf",
+      "bytes": 97524,
+      "sha256": "effbf6efd56d3bc969fcfa43097932e1a858b6cd0ff6564425e0cc48554ad463"
+    },
+    {
+      "path": "assets/fonts/Manrope-Medium.ttf",
+      "bytes": 96904,
+      "sha256": "562fb5d836ed71955f2442a42f2699ab6d8872578bca012d290cdff81aa808aa"
+    },
+    {
+      "path": "assets/lighting/room-reflections_loft-hall.hdr",
+      "bytes": 6432146,
+      "sha256": "2eadabfce70a1f27d958aa18b2572d75883f9964f4656c10e706a44cafe129d0"
+    },
+    {
+      "path": "assets/logos/amex-bluebox-official.svg",
+      "bytes": 9987,
+      "sha256": "7467502c25b9cee472b3ea7e17d71b831dc0bfaa0db9dd1085d0ac73e3be7755"
+    },
+    {
+      "path": "assets/textures/painted_plaster_wall_nor.jpg",
+      "bytes": 4048392,
+      "sha256": "2d601a46ed5ce2af866741c53cafa3cba472620c272e633b6484d4de16a80eb1"
+    },
+    {
+      "path": "assets/textures/painted_plaster_wall_rough.jpg",
+      "bytes": 1595466,
+      "sha256": "35aad595469533cc3b7cc209cc6c7e065d660211f02c867f4492d3b371b1fee1"
+    },
+    {
+      "path": "assets/textures/wood_floor_diff.jpg",
+      "bytes": 2983667,
+      "sha256": "7c3ff1164c8dd0758ef2c048e9a266d28174120de01052ec40e6ca486177345c"
+    },
+    {
+      "path": "assets/textures/wood_floor_nor.jpg",
+      "bytes": 1863576,
+      "sha256": "eff2e4db46bab930dc05997faf5085157eec4fd652cdfc6cd01fa11edd56ef10"
+    },
+    {
+      "path": "assets/textures/wood_floor_rough.jpg",
+      "bytes": 2267559,
+      "sha256": "297eda0d75f2020cc541dbf242e1f5fd058053249567f49a4506fc2c5b1a172b"
+    },
+    {
+      "path": "assets/tool-screens/recreations/01-targetprocess_portfolio-epic.png",
+      "bytes": 140001,
+      "sha256": "ee2a8166136180d452f84126039ef9e1426210845a04ea2d31c3d892ed92b78c"
+    },
+    {
+      "path": "assets/tool-screens/recreations/02-jira_epic.png",
+      "bytes": 134065,
+      "sha256": "c890cff5f9a84cf45e8fcf0ba28439c2c006bc4eaca421e47ee2d732c4034197"
+    },
+    {
+      "path": "assets/tool-screens/recreations/03-targetprocess_integrations.png",
+      "bytes": 88857,
+      "sha256": "a7738e134316d187b2d11ed7355b7ab6ea4d4dbae4891cfed8c0c5311f6236b4"
+    },
+    {
+      "path": "assets/tool-screens/recreations/07-targetprocess_synced-work.png",
+      "bytes": 108624,
+      "sha256": "deed1141463621b201fa3a012af4e7889d69439c65fc40f8cc20ce5790316240"
+    },
+    {
+      "path": "assets/tool-screens/recreations/07b-targetprocess_synced-work-linked.png",
+      "bytes": 105300,
+      "sha256": "f8650a8f04a817b30be40766a8d68684a542a3746521b6fdcf422a56899372a9"
+    },
+    {
+      "path": "assets/tool-screens/recreations/08-targetprocess_features-board.png",
+      "bytes": 81859,
+      "sha256": "045bfcf65a4418047eb2b1a785c054a77ea83e2cdfc8153338b255177697e575"
+    },
+    {
+      "path": "assets/tool-screens/recreations/10b-targetprocess_actions-menu.png",
+      "bytes": 118550,
+      "sha256": "51870bb57cc3853f8289f3115e830e7ec8179818c684e4fe84e006e322bbd379"
+    },
+    {
+      "path": "assets/tool-screens/recreations/13-jira_synced-issue.png",
+      "bytes": 117054,
+      "sha256": "a24ee3cfa455d8d96dfca4a827f9ffced2e972aba958a3ee30863085fcf3eb05"
+    },
+    {
+      "path": "index.html",
+      "bytes": 349,
+      "sha256": "1782f37479db9ca1d4201ab8aeaafe390b1469f0d50da0097d2c03f4216ab28d"
+    },
+    {
+      "path": "node_modules/three/build/three.core.js",
+      "bytes": 1403455,
+      "sha256": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20"
+    },
+    {
+      "path": "node_modules/three/build/three.module.js",
+      "bytes": 603113,
+      "sha256": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a"
+    },
+    {
+      "path": "node_modules/three/examples/jsm/controls/OrbitControls.js",
+      "bytes": 38703,
+      "sha256": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c"
+    },
+    {
+      "path": "node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js",
+      "bytes": 6476,
+      "sha256": "c1b7c9bd2cddff2e3f3a0723f618a3d364a47450e3d25771d21faed88410bec8"
+    },
+    {
+      "path": "node_modules/three/examples/jsm/lights/RectAreaLightTexturesLib.js",
+      "bytes": 314770,
+      "sha256": "8acc50043aebc3ff0f63e21607ef2394cda41d634f92093bcb7ad6f1d1e2eb11"
+    },
+    {
+      "path": "node_modules/three/examples/jsm/lights/RectAreaLightUniformsLib.js",
+      "bytes": 1014,
+      "sha256": "494fef2d731ff1689050cc6040ad78d927c22b9125a12f532beb0374c2811c6e"
+    },
+    {
+      "path": "node_modules/three/examples/jsm/loaders/HDRLoader.js",
+      "bytes": 12456,
+      "sha256": "d7053cfc4019f520335ae07e0fe82b4ef5a66b6766e8b253d066616184995e89"
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 26,
+      "sha256": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1"
+    }
+  ]
+}

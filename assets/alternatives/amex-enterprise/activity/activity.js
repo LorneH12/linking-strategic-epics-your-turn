@@ -52,26 +52,24 @@ addEventListener('resize', () => { frameView(); if (panel.classList.contains('op
 // ---------------------------------------------------------------- tweens and camera moves
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 const tweens = new Set();
-function tween(seconds, fn) {
+function tween(seconds, fn, cameraMove = false) {
   return new Promise(done => {
     if (reduced || seconds <= 0) { fn(1); done(); return; }
-    tweens.add({ start: performance.now(), dur: seconds * 1000, fn, done });
+    tweens.add({ start: performance.now(), dur: seconds * 1000, fn, done, cameraMove });
   });
 }
 let flight = null, room = null, screens = null, device = null;   // no screen yet: the first step flies there
+// a flight that is interrupted (another button, Room) is settled, so nothing waits on it forever
+function cancelCameraTween() { for (const t of [...tweens]) if (t.cameraMove) { tweens.delete(t); t.done(); } }
+function settleFlight() { if (flight) { const previous = flight; flight = null; previous.done(); } }
 function fly(to) {
-  return new Promise(done => {
+  return new Promise((done, fail) => {
+    cancelCameraTween(); settleFlight();
     device = to; updateDeviceButtons();
     try {
-      const plan = planScreenFlight(room.root, camera, to);   // Codex's route around the furniture
+      const plan = planScreenFlight(room.root, camera, to);   // the room's route around furniture, walls and glass
       flight = { plan, start: performance.now() - (reduced ? plan.duration * 1000 : 0), done };   // reduced motion: arrive at once
-    } catch {
-      // no route from here (e.g. outside the room): glide straight to a spot in front of the screen
-      const mesh = screens[to].mesh, c = mesh.getWorldPosition(new THREE.Vector3());
-      const n = new THREE.Vector3(0, 0, 1).transformDirection(mesh.matrixWorld);
-      const p1 = c.clone().addScaledVector(n, to === 'laptop' ? 0.42 : 0.62), p0 = camera.position.clone(), t0 = controls.target.clone();
-      tween(1.6, t => { camera.position.lerpVectors(p0, p1, ease(t)); controls.target.lerpVectors(t0, c, ease(t)); }).then(done);
-    }
+    } catch (e) { device = null; updateDeviceButtons(); fail(e); }   // no safe route: never glide straight through walls; the caller offers a retry
   });
 }
 function updateDeviceButtons() { for (const d of ['monitor', 'laptop']) $(`go-${d}`).setAttribute('aria-pressed', d === device); }
@@ -104,7 +102,7 @@ async function play(actions, dev) {
 }
 
 // ---------------------------------------------------------------- the activity
-const state = { step: 0, tries: 0, firstTry: 0, clues: 0, clueLevel: 0, walkthrough: false, busy: false };
+const state = { step: 0, tries: 0, firstTry: 0, clues: 0, clueLevel: 0, walkthrough: false, busy: false, started: false };
 const panel = $('panel'), choicesEl = $('choices'), feedback = $('feedback');
 
 // on a phone the panel is a bottom sheet; "Show the screen" folds it down to a strip
@@ -131,7 +129,10 @@ function setProgress() {
 async function goTo(i) {
   state.step = i; state.tries = 0; state.clueLevel = 0; $('clue').disabled = false;
   const st = STEPS[i];
-  if (device !== st.device) await fly(st.device);
+  if (device !== st.device) {
+    try { await fly(st.device); }
+    catch (e) { console.error(e); showProblem('The camera couldn’t find a clear path to that screen. Try again.', true, () => goTo(i)); return; }
+  }
   screens[st.device].show(st.screen);
   setProgress();
   $('round-banner').hidden = !st.roundIntro; $('round-banner').textContent = st.roundIntro ?? '';
@@ -157,9 +158,15 @@ async function choose(n) {
   if (c.correct && state.tries === 1 && !state.walkthrough && state.clueLevel === 0) state.firstTry++;
   openPanel(false);                                   // step aside so the answer can be watched
   $('watching').hidden = false; $('watching').textContent = state.walkthrough ? st.narration : `You chose: ${c.text}`;
+  let failed = false;
   try { await play(c.playout, st.device); }
-  catch (e) { console.warn('play-out stopped early:', e.message); }   // never leave the learner stuck
+  catch (e) { failed = true; stopWalkthrough(); console.warn('play-out stopped early:', e.message); }   // never leave the learner stuck
   finally { $('watching').hidden = true; state.busy = false; }
+  if (failed) {   // a demonstration that didn't finish is never shown as a success
+    showFeedback({ correct: false, feedback: 'The demonstration couldn’t finish. Try this step again before continuing.' });
+    $('feedback-title').textContent = 'Let’s replay that step';
+    return;
+  }
   showFeedback(c);
 }
 
@@ -172,10 +179,17 @@ function showFeedback(c) {
   $('try-again').hidden = c.correct; $('continue').hidden = !c.correct;
   (c.correct ? $('continue') : $('try-again')).focus({ preventScroll: true });
   $('announce').textContent = `${$('feedback-title').textContent}. ${c.feedback}`;
-  if (state.walkthrough && c.correct) setTimeout(() => state.walkthrough && next(), 2600);
+  if (state.walkthrough && c.correct) { const at = state.step; advanceTimer = setTimeout(() => { if (state.walkthrough && state.step === at) next(); }, 2600); }
 }
 function tryAgain() { goTo(state.step).then(() => { state.tries = Math.max(state.tries, 1); }); }
-function next() { if (state.step + 1 < STEPS.length) goTo(state.step + 1); else finish(); }
+// Continue: once only (a double click, Enter + click or the walkthrough timer can't skip a step)
+let advanceTimer = null, advancing = false;
+async function next() {
+  if (state.busy || advancing || feedback.hidden || $('continue').hidden) return;
+  advancing = true; clearTimeout(advanceTimer); feedback.hidden = true;
+  try { if (state.step + 1 < STEPS.length) await goTo(state.step + 1); else finish(); }
+  finally { advancing = false; }
+}
 
 function clue() {
   const st = STEPS[state.step];
@@ -207,7 +221,7 @@ async function walkthrough() {
   }
   stopWalkthrough();
 }
-function stopWalkthrough() { state.walkthrough = false; document.body.classList.remove('walkthrough'); $('walk').textContent = 'Walk me through'; }
+function stopWalkthrough() { clearTimeout(advanceTimer); state.walkthrough = false; document.body.classList.remove('walkthrough'); $('walk').textContent = 'Walk me through'; }
 
 function finish() {
   // a walkthrough shows the way, but finishing is something the learner does themselves
@@ -218,17 +232,21 @@ function finish() {
 }
 // the last stage: a review of what has been learned
 function showReview() {
+  saveVideoPosition(); $('journey').hidden = true; panel.inert = false; document.body.classList.remove('in-journey');
   setStage(3);
   panel.querySelectorAll('.step-body, #intro, #finish').forEach(e => { e.hidden = true; });
   $('review').hidden = false; openPanel(true);
   $('step-label').textContent = 'Review';
-  $('review-title').textContent = REVIEW.title;
-  $('review-points').replaceChildren(...REVIEW.points.map(([head, text]) => {
+  $('review-title').textContent = 'Connection checked.';
+  // finished with help from the walkthrough for part of it: say so, and invite an independent try
+  $('review-note').hidden = !state.usedWalkthrough;
+  $('review-note').textContent = 'You used the walkthrough for part of this practice. Try it again on your own when you’re ready.';
+  $('review-points').replaceChildren(...REVIEW.points.filter((_, i) => [2, 3, 5].includes(i)).map(([head, text]) => {
     const li = document.createElement('li'); li.innerHTML = '<b></b><span></span>';
     li.firstChild.textContent = head; li.lastChild.textContent = text; return li;
   }));
   $('announce').textContent = `${ACTIVITY.finish} ${REVIEW.title}.`;
-  $('review-again').focus({ preventScroll: true });
+  $('review-title').focus({ preventScroll: true });
 }
 function walkthroughDone() {
   panel.querySelectorAll('.step-body').forEach(e => { e.hidden = true; });
@@ -249,70 +267,116 @@ function restart() {
 
 // ---------------------------------------------------------------- controls
 $('clue').onclick = clue;
-$('walk').onclick = () => (state.walkthrough ? stopWalkthrough() : walkthrough());
+$('walk').onclick = () => { if (state.walkthrough) stopWalkthrough(); else if (!state.busy && !advancing) walkthrough(); };
 $('try-again').onclick = tryAgain;
 $('continue').onclick = next;
 $('restart').onclick = restart;
 $('rewatch').onclick = () => { restart(); walkthrough(); };
 $('begin').onclick = () => { document.body.classList.add('started'); $('intro').hidden = true; panel.querySelectorAll('.step-body').forEach(e => { e.hidden = false; }); goTo(0); };
-// ---------------------------------------------------------------- the journey: film → explainer → your turn → review
-let stage = 0, roomReady = false;
-const video = $('journey-video');
+// ---------------------------------------------------------------- lesson flow: cover → full film → Your turn → conclusion → completion
+let stage = 0, roomReady = false, videoReturn = null, activeVideo = null;
+const video = $('journey-video'), mediaPositions = { film: 0, explainer: 0 };
 function setStage(n) {
   stage = n;
+  const current = n === 1 ? 1 : n === 2 ? 1 : n === 3 ? 2 : n === 4 ? 3 : 0;
   $('stages').replaceChildren(...JOURNEY.stages.map((name, i) => {
     const li = document.createElement('li'); li.textContent = name;
-    li.className = i < n ? 'done' : i === n ? 'now' : ''; if (i === n) li.setAttribute('aria-current', 'step'); return li;
+    li.className = i < current ? 'done' : i === current ? 'now' : '';
+    if (i === current) li.setAttribute('aria-current', 'step'); return li;
   }));
 }
-function playVideo(which) {                                   // which: 'film' or 'explainer'
+function saveVideoPosition() { if (activeVideo && Number.isFinite(video.currentTime)) mediaPositions[activeVideo] = video.currentTime; video.pause(); }
+function showJourney() {
+  openPanel(false); panel.inert = true; document.body.classList.add('in-journey');
+  $('journey').hidden = false; $('journey').classList.remove('at-landing');
+  for (const id of ['landing','player','practice-entry','completion']) $(id).hidden = true;
+  $('status').hidden = true;
+}
+function showPracticeEntry() {
+  saveVideoPosition(); setStage(2); showJourney(); $('practice-entry').hidden = false;
+  for (const detail of document.querySelectorAll('#practice-entry details')) detail.open = false;
+  $('enter-practice').textContent = state.started ? 'Resume practice' : 'Jump into practice';
+  $('entry-title').focus({ preventScroll: true });
+}
+function playVideo(which, returnTo = showPracticeEntry, firstWatch = false) {
+  saveVideoPosition(); activeVideo = which; videoReturn = returnTo;
   const src = which === 'film' ? JOURNEY.film : JOURNEY.explainer;
-  setStage(which === 'film' ? 0 : 1);
-  document.body.classList.add('in-journey'); $('journey').hidden = false; $('journey').classList.remove('at-landing');
-  $('landing').hidden = true; $('player').hidden = false;
-  $('player-note').textContent = which === 'film' ? `The full film · ${JOURNEY.film.minutes}` : JOURNEY.explainer.intro;
-  video.replaceChildren(); video.removeAttribute('src');
-  video.poster = which === 'film' ? JOURNEY.film.poster : '';
-  video.src = src.src;
-  // captions on by default (the explainer has its words in the picture already)
+  showJourney(); $('player').hidden = false;
+  $('player-note').textContent = which === 'film' ? 'Full walkthrough · 3:57' : 'Focused explainer · 0:39';
+  $('video-error').hidden = true; $('video-recovery').hidden = true;
+  video.replaceChildren(); video.removeAttribute('src'); video.poster = src.poster || ''; video.src = src.src;
   if (src.captions) { const tr = document.createElement('track'); Object.assign(tr, { kind: 'captions', src: src.captions, srclang: 'en', label: 'English', default: true }); video.append(tr); tr.track.mode = 'showing'; }
-  $('journey-skip').textContent = which === 'film' ? 'Skip to the explainer' : 'Skip to the activity';
-  $('journey-skip').onclick = () => (which === 'film' ? playVideo('explainer') : toActivity());
-  video.onended = () => (which === 'film' ? playVideo('explainer') : toActivity());
-  video.play().catch(() => {});
-  $('journey-skip').focus({ preventScroll: true });
+  video.onloadedmetadata = () => { $('video-error').hidden = true; $('video-recovery').hidden = true; const at = mediaPositions[which]; if (at > 0 && at < video.duration - 1) video.currentTime = at; };
+  const back = () => { saveVideoPosition(); videoReturn(); };
+  $('journey-skip').hidden = firstWatch;
+  $('journey-skip').textContent = returnTo === showPracticeEntry ? 'Continue to Your turn' : 'Return to training';
+  $('journey-skip').onclick = back;
+  video.onended = () => { mediaPositions[which] = 0; video.pause(); videoReturn(); };
+  video.onerror = () => { $('video-error').hidden = false; $('video-recovery').hidden = false; $('video-direct').href = src.src; };
+  $('retry-video').onclick = () => { video.load(); video.play().catch(() => {}); };
+  video.play().catch(() => {}); // initiated by the learner's explicit Start/watch action
+  video.focus({ preventScroll: true });
 }
 function toActivity() {
-  video.pause(); setStage(2);
-  $('journey').hidden = true; document.body.classList.remove('in-journey');
-  if (roomReady) { openPanel(true); $('begin').focus(); return; }
+  saveVideoPosition(); setStage(2); $('journey').hidden = true; panel.inert = false; document.body.classList.remove('in-journey');
+  if (roomReady) { openPanel(true); return; }
   $('status').hidden = false;
-  if (!renderer) { showProblem('This device can’t show the 3D office (its graphics are switched off or too old). The film and the explainer still work.', false); return; }
+  if (!renderer) { showProblem('This browser could not start the 3D office. Check WebGL compatibility and hardware-acceleration availability. The films still work; retry cannot enable WebGL.', false); return; }
   loadRoom();
 }
-// something went wrong: say so plainly and offer a way on (retry) and a way back
-function showProblem(text, canRetry) {
-  $('status').hidden = false; $('status-text').textContent = text;
+async function beginPractice(guided = false) {
+  toActivity();
+  if (!renderer) return;
+  if (state.started && roomReady && !guided) return;
+  await loadRoom();
+  if (!roomReady || stage !== 2 || !$('journey').hidden) return;
+  document.body.classList.add('started'); $('intro').hidden = true;
+  if (!$('review').hidden || !$('finish').hidden) restart();
+  panel.querySelectorAll('.step-body').forEach(e => { e.hidden = false; });
+  await goTo(state.step); state.started = true;
+  if (guided && !state.busy && !state.walkthrough) walkthrough();
+}
+let retryAction = null;
+function showProblem(text, canRetry, onRetry = null) {
+  retryAction = onRetry; $('status').hidden = false; $('status-text').textContent = text;
   $('status-actions').hidden = false; $('retry').hidden = !canRetry;
   (canRetry ? $('retry') : $('back-to-start')).focus();
 }
-$('retry').onclick = () => { $('status-actions').hidden = true; loading = null; loadRoom(); };
-$('back-to-start').onclick = () => {
-  $('status').hidden = true; $('status-actions').hidden = true; setStage(0);
-  document.body.classList.add('in-journey'); $('journey').hidden = false; $('journey').classList.add('at-landing');
-  $('player').hidden = true; $('landing').hidden = false; $('start-film').focus();
-};
+$('retry').onclick = () => { $('status-actions').hidden = true; if (retryAction) { $('status').hidden = true; retryAction(); } else { loading = null; beginPractice(); } };
+$('back-to-start').onclick = showPracticeEntry;
+$('back-to-start').textContent = 'Back to learning options';
 $('sheet-toggle').onclick = () => setFolded(!folded);
-$('start-film').onclick = () => playVideo('film');
-$('skip-to-explainer').onclick = () => playVideo('explainer');
-$('review-film').onclick = () => playVideo('film');
-$('review-explainer').onclick = () => playVideo('explainer');
+$('start-film').onclick = () => { setStage(0); playVideo('film', showPracticeEntry, true); };
+$('enter-practice').onclick = () => beginPractice();
+$('practice-options').onclick = () => { if (!state.busy && !state.walkthrough && !advancing) showPracticeEntry(); };
+$('entry-walkthrough').onclick = () => beginPractice(true);
+$('entry-film').onclick = () => playVideo('film', showPracticeEntry);
+$('entry-explainer').onclick = () => playVideo('explainer', showPracticeEntry);
+$('review-film').onclick = () => playVideo('film', showReview);
+$('review-explainer').onclick = () => playVideo('explainer', showReview);
 $('review-again').onclick = () => { restart(); };
-$('go-monitor').onclick = () => fly('monitor');
-$('go-laptop').onclick = () => fly('laptop');
-$('go-room').onclick = () => { flight = null; tween(1.4, (() => { const p0 = camera.position.clone(), t0 = controls.target.clone(), p1 = new THREE.Vector3(1.9, 1.75, 2.6), t1 = new THREE.Vector3(-0.2, 1.05, -0.3); return t => { camera.position.lerpVectors(p0, p1, ease(t)); controls.target.lerpVectors(t0, t1, ease(t)); }; })()); };
+$('complete-training').onclick = () => {
+  saveVideoPosition(); setStage(4); showJourney(); $('completion').hidden = false;
+  $('completion-text').textContent = state.usedWalkthrough ? 'You completed this practice with walkthrough guidance. You can revisit the conclusion and try independently whenever you’re ready.' : 'You completed both practice rounds and checked the Targetprocess–Jira connection.';
+  $('completion-title').focus({ preventScroll: true });
+};
+$('back-to-conclusion').onclick = showReview;
+window.__journey = { toActivity, showPracticeEntry, playVideo, stage: () => stage };
+const goView = d => fly(d).catch(e => { console.error(e); showProblem('The camera couldn’t find a clear path to that screen. Try again.', true, () => goView(d)); });
+$('go-monitor').onclick = () => goView('monitor');
+$('go-laptop').onclick = () => goView('laptop');
+$('inspect-screen').onclick = () => {
+  if (!screens || !device) return;
+  const name = device === 'laptop' ? 'Laptop' : 'Monitor';
+  $('detail-title').textContent = `${name} screen`;
+  $('detail-image').src = screens[device].mesh.material.map.image.toDataURL('image/png');
+  $('detail-image').alt = `Current ${name.toLowerCase()} demonstration, ${STEPS[state.step].question}`;
+  $('screen-detail').showModal();
+};
+$('go-room').onclick = () => { cancelCameraTween(); settleFlight(); device = null; updateDeviceButtons(); tween(1.4, (() => { const p0 = camera.position.clone(), t0 = controls.target.clone(), p1 = new THREE.Vector3(1.9, 1.75, 2.6), t1 = new THREE.Vector3(-0.2, 1.05, -0.3); return t => { camera.position.lerpVectors(p0, p1, ease(t)); controls.target.lerpVectors(t0, t1, ease(t)); }; })(), true); };
 addEventListener('keydown', e => {
   // shortcuts only while a question is on screen (not on the cover, a film or the review)
+  if ($('screen-detail').open) return;
   if (e.target.closest?.('input, textarea, video') || e.ctrlKey || e.metaKey || e.altKey) return;
   const asking = stage === 2 && $('journey').hidden && panel.classList.contains('open') && !choicesEl.hidden && !$('question').hidden && $('intro').hidden;
   if (!asking) return;
@@ -323,15 +387,11 @@ addEventListener('keydown', e => {
 // ---------------------------------------------------------------- start
 // the landing page: the full film first
 // the cover (hero): words and picture from steps.js › JOURNEY.landing
-const L = JOURNEY.landing, li = (cls, ...kids) => { const e = document.createElement('li'); if (cls) e.className = cls; e.append(...kids); return e; };
-const span = (cls, text) => { const e = document.createElement('span'); e.className = cls; e.textContent = text; return e; };
-$('hero-brand').textContent = L.brand; $('landing-eyebrow').textContent = L.kicker; $('landing-title').textContent = L.title; $('landing-text').textContent = L.lede;
+const L = JOURNEY.landing;
+$('hero-brand').textContent = L.brand; $('landing-title').textContent = L.title; $('landing-text').textContent = L.lede;
 $('hero-image').src = L.image; $('hero-image').alt = L.imageAlt;
-$('hero-meta').replaceChildren(...L.meta.map(m => li('', m)));
-$('hero-parts').replaceChildren(...L.parts.map(([title, time, text], i) => li('part', span('part-n', String(i + 1).padStart(2, '0')), span('part-title', title), span('part-time', time), span('part-text', text))));
-$('hero-footnote').textContent = L.footnote;
 $('journey').classList.add('at-landing');
-setStage(0); $('status').hidden = true;
+setStage(0); panel.inert = true; document.body.classList.add('in-journey'); $('status').hidden = true;
 window.__shell = true;   // the landing page is ready (the office loads later)
 
 // the 3D office is built only when the learner reaches "Your turn": building it is heavy and,
@@ -340,6 +400,7 @@ let loading = null;
 const loadRoom = () => (loading ??= (async () => {
   const status = $('status'), text = $('status-text');
   text.textContent = 'Setting up the office…';
+  $('status-actions').hidden = false; $('retry').hidden = true;
   let slow = setTimeout(() => { text.textContent = 'Still setting up the office. Slower devices can take a minute…'; }, 25000);
   try {
     room ??= await buildRoom(scene, renderer, p => { text.textContent = typeof p === 'string' ? p : 'Loading the office…'; });
@@ -350,7 +411,7 @@ const loadRoom = () => (loading ??= (async () => {
     $('title').textContent = ACTIVITY.title; $('intro-text').textContent = ACTIVITY.intro;
     status.hidden = true; document.body.classList.add('ready'); roomReady = true;
     if (stage === 2 && $('journey').hidden) { openPanel(true); $('begin').focus(); }
-    window.__activity = { state, STEPS, screens, ready: true, stage: () => stage, playVideo, toActivity };
+    window.__activity = { state, STEPS, screens, ready: true, stage: () => stage, flightActive: () => !!flight, camera, room, controls, renderer, playVideo, toActivity };
   } catch (e) {
     console.error(e);
     showProblem('The office didn’t load. Check your connection and try again.', true);
@@ -358,11 +419,11 @@ const loadRoom = () => (loading ??= (async () => {
 })());
 
 // draw only when something moves (camera, cursor, ring, panel); otherwise a few times a second
-// for the room's slow sun drift. If frames run slow, draw at a lower resolution.
+// for the room's slow sun drift. Preserve configured screen resolution.
 const clock = new THREE.Clock();
-let dragging = false, lastDraw = 0, slowFrames = 0, ratio = renderer ? renderer.getPixelRatio() : 1;
+let dragging = false, lastDraw = 0;
 if (renderer) {
-  controls.addEventListener('start', () => { dragging = true; });
+  controls.addEventListener('start', () => { cancelCameraTween(); settleFlight(); device = null; updateDeviceButtons(); dragging = true; });
   controls.addEventListener('end', () => { dragging = false; });
 }
 renderer?.setAnimationLoop(() => {
@@ -382,9 +443,5 @@ renderer?.setAnimationLoop(() => {
   room?.animate?.(clock.getElapsedTime(), 1);
 
   renderer.render(scene, camera);
-  if (moving && lastDraw && now - lastDraw < 100) {   // adaptive resolution while things move
-    slowFrames = now - lastDraw > 45 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
-    if (slowFrames > 20 && ratio > 0.75) { ratio = Math.max(0.75, ratio - 0.25); renderer.setPixelRatio(ratio); frameView(); slowFrames = 0; }
-  }
   lastDraw = now;
 });

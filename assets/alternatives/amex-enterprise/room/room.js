@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { buildObjects } from './objects.js';
 import { buildCity } from './city.js';
+import { buildOffice } from './office.js';
+import { createLightingController } from './lighting.js';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 
@@ -16,10 +18,13 @@ export const shots = {
   reverse: { position:[-2.65,1.85,-2.15], target:[.5,1.1,.65], fov:50 },
   city: { position:[-3.25,1.85,1.5], target:[-27,4,-5], fov:52 },
   street: { position:[-3.35,2.15,2.9], target:[-13,-3.9,-6], fov:54 },
-  materials: { position:[1.8,1.28,1.0], target:[.72,.83,.03], fov:38 }
+  materials: { position:[1.8,1.28,1.0], target:[.72,.83,.03], fov:38 },
+  office: { position:[1.4,1.8,3.7], target:[7.4,1.35,.4], fov:62 },
+  threshold: { position:[5.7,1.75,2.9], target:[0,1.2,-.3], fov:60 },
+  building: { position:[10.8,2.1,3.2], target:[2.4,1.3,-.5], fov:65 }
 };
 
-export async function buildRoom(scene, renderer, progress=()=>{}) {
+export async function buildRoom(scene, renderer, progress=()=>{}, options={}) {
   RectAreaLightUniformsLib.init();
   const root = new THREE.Group(); root.name='Amex enterprise alternative room'; scene.add(root);
   const materials={}, lights={}, anchors={}, errors=[];
@@ -35,6 +40,7 @@ export async function buildRoom(scene, renderer, progress=()=>{}) {
     texture(local('materials/woven-normal.png'),false,[8,8]),texture(local('materials/stone-normal.png'),false,[3,2]),texture(local('materials/stone-roughness.png'),false,[3,2]),
     new HDRLoader(manager).loadAsync(asset('lighting/room-reflections_loft-hall.hdr'))
   ]);
+  progress('Scanned surfaces and HDR loaded');
   hdr.mapping=THREE.EquirectangularReflectionMapping;scene.environment=hdr;scene.environmentIntensity=.75;scene.environmentRotation.y=.7;scene.background=new THREE.Color('#9ecdea');
   scene.fog=new THREE.FogExp2('#cce0ed',.006);
   const standard=(name,props)=>materials[name]=new THREE.MeshStandardMaterial({name,...props});
@@ -66,7 +72,7 @@ export async function buildRoom(scene, renderer, progress=()=>{}) {
   box('Feature wall',[8,3.4,.18],[0,1.7,-3.55],white,root,0);
   box('Ceiling',[8,.12,8],[0,3.46,.5],white,root,0);
   box('Rear return wall',[8,3.4,.16],[0,1.7,4.58],white,root,0);
-  box('Right wall',[.15,3.4,8],[4.08,1.7,.5],white,root,0);
+  const office=buildOffice({root,box,plane,area,materials});
   box('Window sill wall',[.18,.38,8],[-4.08,.19,.5],white,root,0);
   box('Window head',[.18,.22,8],[-4.08,3.29,.5],white,root,0);
   for(const z of [-3.4,-1.45,.5,2.45,4.4])box('Window mullion',[.13,2.85,.065],[-4,1.8,z],trim);
@@ -74,7 +80,6 @@ export async function buildRoom(scene, renderer, progress=()=>{}) {
   for(let i=0;i<4;i++){const p=plane('Window glazing',1.88,2.75,[-4.015,1.78,-2.43+i*1.95],glass);p.rotation.y=Math.PI/2;p.castShadow=false;}
   const city=buildCity({root,box,mesh,plane,materials});
   for(const z of [-3.4,4.4])box('Skirting',[7.95,.08,.025],[0,.04,z],trim,root,0);
-  box('Right skirting',[.025,.08,7.8],[3.98,.04,.5],trim,root,0);
   // Rear wall: dimensional slats, stone panel and an authentic logo texture.
   box('Brand wall stone panel',[3.4,2.75,.08],[-.35,1.7,-3.405],stone);
   for(let i=0;i<17;i++)box('Oak acoustic fin',[.055,2.75,.08],[1.5+i*.14,1.7,-3.37],oak,root,.008);
@@ -130,11 +135,6 @@ export async function buildRoom(scene, renderer, progress=()=>{}) {
   for(const x of [-.43,.43])box('Lounge arm',[.13,.35,.78],[x,.58,0],fabric,lounge,.055);
   for(const x of [-.32,.32])for(const z of [-.25,.25])cyl('Lounge oak foot',.025,.02,.32,[x,.16,z],oak,lounge);
   cyl('Side table stem',.035,.035,.49,[1.8,.245,1.65],aluminium);cyl('Side table base',.24,.24,.025,[1.8,.018,1.65],trim);cyl('Side table stone top',.34,.34,.03,[1.8,.51,1.65],stone);
-  // Glass partition on the right: visible edges and frosting establish room depth.
-  for(const z of [-1.45,.1])box('Partition mullion',[.04,3.05,.04],[3.5,1.525,z],aluminium);
-  const part=plane('Glass partition',1.5,3,[3.5,1.53,-.675],glass);part.rotation.y=-Math.PI/2;part.castShadow=false;
-  const frosting=new THREE.MeshPhysicalMaterial({color:'#d5e6eb',transparent:true,opacity:.34,roughness:.8,side:THREE.DoubleSide,depthWrite:false});
-  const band=plane('Frosted privacy band',1.48,.18,[3.495,1.28,-.675],frosting);band.rotation.y=-Math.PI/2;band.castShadow=false;
   // Pendant has a visible diffuser AND a real emitter.
   for(const x of [-.72,.72])cyl('Pendant suspension',.003,.003,.43,[x,3.18,-.1],aluminium);
   box('Suspended linear light',[1.85,.055,.08],[0,2.94,-.1],aluminium,root,.018);
@@ -168,7 +168,9 @@ export async function buildRoom(scene, renderer, progress=()=>{}) {
   const deskGroup=new THREE.Group();deskGroup.name='NEW / demonstration desk';root.add(deskGroup);
   for(const child of [...root.children])if(/^(Demonstration desk|Desk underside|Desk pedestal|Desk foot|Cable trough|Cable cover)/.test(child.name))deskGroup.attach(child);
   objects.parts[deskGroup.name]=deskGroup;
-  return {root,materials,lights,anchors,errors,objects,city,animate(time,strength=1){objects.animate(time,strength);city.animate(time,strength);sun.position.z=2.3+Math.sin(time/180)*.22*strength;},dispose(){root.traverse(o=>{o.geometry?.dispose();});Object.values(materials).forEach(m=>m.dispose());scene.remove(root);}};
+  const lighting=createLightingController({scene,renderer,root,lights,materials});
+  if(options.lightingPreset && options.lightingPreset!=='baseline')lighting.apply(options.lightingPreset);
+  return {root,materials,lights,anchors,errors,objects,city,office,lighting,setLightingPreset:lighting.apply,animate(time,strength=1){objects.animate(time,strength);city.animate(time,strength);sun.position.z=2.3+Math.sin(time/180)*.22*strength;},dispose(){root.traverse(o=>{o.geometry?.dispose();});Object.values(materials).forEach(m=>m.dispose());scene.remove(root);}};
 }
 
 

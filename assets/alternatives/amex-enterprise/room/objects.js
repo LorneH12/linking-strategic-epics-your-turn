@@ -91,7 +91,7 @@ export async function buildObjects({root,box,cyl,mesh,plane,area,label,materials
  }
  // Three objects for the shelf and contemporary abstract art with a real frame.
  for(let k=0;k<4;k++)box('Bound reference volume',[.28,.035,.2],[1.32,.77+k*.035,-2.95],k%2?white:blue,root,.003);
- const art=group('NEW / framed geometric print',[3.975,1.8,2.6],-Math.PI/2);
+ const art=group('NEW / framed geometric print',[0,1.8,4.465],Math.PI);
  box('Print frame',[1.25,1.55,.035],[0,0,0],oakMat(),art,.008);
  box('Print mount',[1.19,1.49,.007],[0,0,.023],white,art,.001);
  const artwork=document.createElement('canvas');artwork.width=800;artwork.height=1000;const ag=artwork.getContext('2d');ag.fillStyle='#f8f7f2';ag.fillRect(0,0,800,1000);ag.strokeStyle='#006fcf';ag.lineWidth=2;

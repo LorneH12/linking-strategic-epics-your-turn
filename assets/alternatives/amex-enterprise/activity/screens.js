@@ -42,6 +42,8 @@ function makeScreen(mesh) {
   edge.scale.setScalar(1.22); edge.position.set(-0.06, 0.08, 0); fill.position.z = 0.0002;
   cursor.add(edge, fill); cursor.scale.setScalar(s); cursor.position.set(W * 0.25, -H * 0.3, z * 2); cursor.visible = false; layer.add(cursor);
   const ripple = new THREE.Mesh(new THREE.RingGeometry(0.7, 1, 48), new THREE.MeshBasicMaterial({ color: BLUE, toneMapped: false, transparent: true, opacity: 0 }));
+  // keep the resting ring screen-sized: the room's camera planner checks mesh bounds, invisible ones too
+  ripple.scale.setScalar(W * 0.006);
   ripple.position.z = z * 1.5; layer.add(ripple);
   const hl = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: BLUE, toneMapped: false, transparent: true, opacity: 0 }));
   hl.position.z = z; layer.add(hl);

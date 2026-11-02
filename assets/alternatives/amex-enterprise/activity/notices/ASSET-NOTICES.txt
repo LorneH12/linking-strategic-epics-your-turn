@@ -1,0 +1,7 @@
+Runtime asset notices
+
+Three.js: MIT; full notice in THREE-LICENSE.txt.
+Manrope: Copyright 2018 The Manrope Project Authors (https://github.com/googlefonts/manrope), SIL Open Font License 1.1; full license in Manrope-OFL.txt. Source: https://github.com/google/fonts/tree/main/ofl/manrope . Temporary review typography.
+American Express Blue Box logo (assets/logos/amex-bluebox-official.svg): the official 2018 Blue Box artwork as published on Wikimedia Commons (File:American Express logo (2018).svg), marked public domain there as simple text and shapes. It remains an American Express trademark; no affiliation or endorsement is asserted by this training preview.
+Oak/plaster maps and loft environment: existing project references attributed to Poly Haven / CC0 in room documentation; original source-specific acquisition records have not been independently re-audited in this integration.
+Woven/stone maps, procedural furnishings, fictional city, foliage/cloud/abstract artwork: authored for this project. Application screens are fictional demo recreations, not real tenant captures. Product and brand names belong to their respective owners.

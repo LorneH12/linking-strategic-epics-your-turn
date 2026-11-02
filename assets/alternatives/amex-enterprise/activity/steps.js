@@ -23,8 +23,8 @@
 
 export const ACTIVITY = {
   title: 'Your turn: push a Feature to Jira',
-  intro: 'The Feature “Tokenized checkout” sits under the Strategic Epic “Payments Modernization”. Send it to Jira Cloud and check that the link works. Answer each step; you will see it happen on the screens.',
-  finish: 'Done. The Feature now lives in Jira as PAY-142, linked to Targetprocess, and future changes sync within your filters.',
+  intro: 'The Feature “Tokenized checkout” sits under the Strategic Epic “Payments Modernization”. Send it to Jira Cloud and check that the link works. This demo assumes an enabled integration, Feature-to-Epic mapping and PAY routing. Answer each step; you will see it happen on the screens.',
+  finish: 'Done. The Feature now lives in Jira as PAY-142, linked to Targetprocess, and future changes sync according to the enabled integration profile and filter rules.',
 };
 
 // the pictures (from assets/tool-screens/recreations/) and the spots on them, as fractions of the
@@ -130,7 +130,7 @@ export const STEPS = [
     question: 'You are in Jira on PAY-142. Where can you see that it came from Targetprocess?',
     choices: [
       { text: 'Activity: “created this issue from Targetprocess Feature #4121”', correct: true,
-        feedback: 'Right. The Activity shows the integration created the issue from Feature #4121, and syncs updates from Targetprocess.',
+        feedback: 'Right. The Activity shows the integration created the issue from Feature #4121, and identifies Targetprocess as the source. Updates depend on the enabled integration profile and filter rules.',
         playout: [['cursor', 'activity'], ['highlight', 'activity']] },
       { text: 'The Reporter field',
         feedback: 'Close. The Reporter is the Integration user, a good sign, but the Activity names the exact Targetprocess Feature.',
@@ -203,13 +203,13 @@ export const STEPS = [
 // THE JOURNEY: film → explainer → your turn → review. Words and video sources.
 // =============================================================================
 export const JOURNEY = {
-  stages: ['Watch the film', 'Explainer', 'Your turn', 'Review'],
+  stages: ['Watch', 'Your turn', 'Conclusion', 'Complete'],
   // the cover: a website-style hero
   landing: {
     brand: 'Enterprise Technology Services',
     kicker: 'Tools training · Targetprocess ↔ Jira Cloud',
-    title: 'Linking Strategic Epics',
-    lede: 'Send a Feature from Targetprocess to Jira Cloud, and prove the link, in about ten minutes.',
+    title: 'Push a Feature to Jira',
+    lede: 'Watch the steps. Practise the connection.',
     meta: ['About 10 minutes', '4 parts', 'Captions on'],
     image: 'images/hero-room.jpg',
     imageAlt: 'A bright American Express private office with a city view, a monitor and a laptop on the desk',
@@ -237,7 +237,7 @@ export const REVIEW = {
     ['Push from the item', 'Open the Feature itself and go to its Synced Work tab. Settings › Integrations is for admins setting up the profile.'],
     ['Push as new or Link to Existing', 'Push as new creates the matching Epic in Jira. Link to Existing is only for a Jira issue that already exists.'],
     ['The External ID is your proof', 'The Jira key on the card (e.g. PAY-142) shows the link exists, and clicking it opens the exact Jira issue.'],
-    ['Jira shows where it came from', 'The issue’s Activity says it was created from the Targetprocess Feature. Changes sync automatically within your filters.'],
-    ['Watch-out', 'Unlinking an item that still matches your filters can push a duplicate. Fix the filters first.'],
+    ['Jira shows where it came from', 'The issue’s Activity says it was created from the Targetprocess Feature. Updates follow your enabled integration profile and filter rules.'],
+    ['Watch-out', 'Unlinking an item that still matches enabled auto-push filters can push a duplicate. Fix the filters first.'],
   ],
 };

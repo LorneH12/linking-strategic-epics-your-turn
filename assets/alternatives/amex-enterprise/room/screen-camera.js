@@ -23,7 +23,7 @@ export function planScreenFlight(root,camera,name) {
     o.geometry.computeBoundingBox();
     const b=o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld).expandByScalar(.035);
     // Only nearby room geometry participates. An already intersecting start must be escapable.
-    if(b.max.x < -4.2||b.min.x>4.2||b.max.z < -3.7||b.min.z>4.6||b.containsPoint(start))return;
+    if(b.max.x < -4.2||b.min.x>12.3||b.max.z < -3.7||b.min.z>4.8||b.containsPoint(start))return;
     boxes.push(b);
   });
   const ray=new THREE.Ray(), hit=new THREE.Vector3();
@@ -36,6 +36,13 @@ export function planScreenFlight(root,camera,name) {
   const nodes=[start,frame.position,frame.center.clone().addScaledVector(frame.normal,1.15)];
   for(const y of [1.8,2.35,2.95])for(const x of [-2.8,-1.4,0,1.4,2.8])for(const z of [-2, .8,2.6]){
     const p=new THREE.Vector3(x,y,z);if(!boxes.some(b=>b.containsPoint(p)))nodes.push(p);
+  }
+  // Pass through the physical door opening, never through the glass partition.
+  for(const y of [1.8,2.25])for(const x of [3.4,4.08,4.8,5.7,7.3,9,10.8]){
+    const p=new THREE.Vector3(x,y,2.9);if(!boxes.some(b=>b.containsPoint(p)))nodes.push(p);
+  }
+  for(const x of [5.7,8.6,11.2])for(const z of [-2.6,-.3,2.9]){
+    const p=new THREE.Vector3(x,2.25,z);if(!boxes.some(b=>b.containsPoint(p)))nodes.push(p);
   }
   const distances=nodes.map(()=>Infinity),previous=[],visited=new Set();distances[0]=0;
   while(visited.size<nodes.length){
