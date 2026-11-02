@@ -1,5 +1,5 @@
 {
-  "releaseId": "1793601927074",
+  "releaseId": "1793606221923",
   "files": [
     {
       "path": ".nojekyll",
@@ -13,8 +13,8 @@
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/activity.js",
-      "bytes": 28078,
-      "sha256": "0b7b233fb0cb2dcbaeb73d4937d6f8dd4b196a004baf04c659213b116a7263fc"
+      "bytes": 28022,
+      "sha256": "f1f5651f04b9182db05475f68e32a4bd6f8be810f19939a49cdf5464db9f8f23"
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/images/hero-workstation.jpg",
@@ -23,8 +23,8 @@
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/index.html",
-      "bytes": 8025,
-      "sha256": "391540db07fb749b1c7a36846c9b6015204e4e263d77384edd0cf8540cc94fde"
+      "bytes": 8009,
+      "sha256": "81195de32a97e0e8d574f7cd67af364a5b9a2df8c92572f9dbed5cb8f57a0067"
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/notices/ASSET-NOTICES.txt",
@@ -48,8 +48,8 @@
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/steps.js",
-      "bytes": 17114,
-      "sha256": "b19787ad5614d20f8bfc15982bbe5edd48d382bedcddff85dd29affbbf9c92a8"
+      "bytes": 17428,
+      "sha256": "79f9993fd763b7d3abb57ec5c56e88f771ea36c55fb47dbac5c517f75747c45a"
     },
     {
       "path": "assets/alternatives/amex-enterprise/explainer/explainer-web.mp4",
@@ -241,5 +241,16 @@
       "bytes": 26,
       "sha256": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1"
     }
-  ]
+  ],
+  "editorialOverlay": {
+    "source": "252406cd8ad69830dd3f8e7a31fb53ed05e1b862",
+    "runtimeProof": "f929f80a67a405a47ac512249f2f55758ea21583",
+    "previous": "b95ece9e9728706c61e291dbe0f5a8ed7fa80daa",
+    "baselineManifest": {
+      "bytes": 9097,
+      "sha256": "92a003255f5c6e360e8390f0e71c0e09013c2bac096c74d0d26c23eb92510c5e"
+    },
+    "reusedAssets": true,
+    "newCapture": false
+  }
 }

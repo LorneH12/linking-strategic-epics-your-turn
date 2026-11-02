@@ -198,7 +198,7 @@ function clue() {
   // three levels: the goal, then where to look, then the exact next action
   const right = st.choices.find(c => c.correct).text;
   $('clue-text').textContent = state.clueLevel === 1 ? st.clue
-    : state.clueLevel === 2 ? 'Look where the gold ring is on the screen.'
+    : state.clueLevel === 2 ? st.clueLocation || 'Look where the gold ring is on the screen.'
     : `Next action: ${right}.`;
   if (state.clueLevel >= 2) screens[st.device].highlight(st.hint, COLORS.GOLD);
   if (state.clueLevel >= 3) $('clue').disabled = true;
@@ -240,7 +240,7 @@ function showReview() {
   $('review-title').textContent = 'Connection checked.';
   // finished with help from the walkthrough for part of it: say so, and invite an independent try
   $('review-note').hidden = !state.usedWalkthrough;
-  $('review-note').textContent = 'You used the walkthrough for part of this practice. Try it again on your own when you’re ready.';
+  $('review-note').textContent = 'You used walkthrough guidance. Try both rounds on your own when you’re ready.';
   $('review-points').replaceChildren(...REVIEW.points.filter((_, i) => [2, 3, 5].includes(i)).map(([head, text]) => {
     const li = document.createElement('li'); li.innerHTML = '<b></b><span></span>';
     li.firstChild.textContent = head; li.lastChild.textContent = text; return li;
@@ -252,7 +252,7 @@ function walkthroughDone() {
   panel.querySelectorAll('.step-body').forEach(e => { e.hidden = true; });
   $('finish').hidden = false; openPanel(true);
   $('finish-title').textContent = 'That’s the walkthrough';
-  $('finish-text').textContent = 'You’ve seen every step. Now try it yourself: the steps start again from the Strategic Epic.';
+  $('finish-text').textContent = 'You’ve seen the remaining steps. Try it yourself from the Strategic Epic.';
   $('score').textContent = '';
   $('restart').textContent = 'Try it myself'; $('restart').focus();
 }
@@ -357,7 +357,7 @@ $('review-explainer').onclick = () => playVideo('explainer', showReview);
 $('review-again').onclick = () => { restart(); };
 $('complete-training').onclick = () => {
   saveVideoPosition(); setStage(4); showJourney(); $('completion').hidden = false;
-  $('completion-text').textContent = state.usedWalkthrough ? 'You completed this practice with walkthrough guidance. You can revisit the conclusion and try independently whenever you’re ready.' : 'You completed both practice rounds and checked the Targetprocess–Jira connection.';
+  $('completion-text').textContent = state.usedWalkthrough ? 'You used walkthrough guidance for part of this practice. Try it independently whenever you’re ready.' : 'You’ve practised both ways to connect a Feature and check its Jira link.';
   $('completion-title').focus({ preventScroll: true });
 };
 $('back-to-conclusion').onclick = showReview;
