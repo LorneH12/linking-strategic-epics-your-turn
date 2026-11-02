@@ -1,5 +1,5 @@
 {
-  "releaseId": "1793597695356",
+  "releaseId": "1793601927074",
   "files": [
     {
       "path": ".nojekyll",
@@ -8,8 +8,8 @@
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/activity.css",
-      "bytes": 14683,
-      "sha256": "3b523120fef5cad52ada3056518ee2a13536b1393a08db53dfaf3ba73de23aff"
+      "bytes": 14691,
+      "sha256": "a707077787a46b80fa594c189d7cae65e229449c27a430afd80e01c74ccb9106"
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/activity.js",
@@ -17,9 +17,9 @@
       "sha256": "0b7b233fb0cb2dcbaeb73d4937d6f8dd4b196a004baf04c659213b116a7263fc"
     },
     {
-      "path": "assets/alternatives/amex-enterprise/activity/images/hero-room.jpg",
-      "bytes": 238441,
-      "sha256": "25e1c2843ec4cf83165ffddbf63cf5f369f3abed49a3d8235cd16a6a3828626e"
+      "path": "assets/alternatives/amex-enterprise/activity/images/hero-workstation.jpg",
+      "bytes": 227426,
+      "sha256": "6525d58a7b6954cfd321a7131d8d4b4e47987adc47c5339ff8e591ce4a75f11c"
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/index.html",
@@ -28,8 +28,8 @@
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/notices/ASSET-NOTICES.txt",
-      "bytes": 1146,
-      "sha256": "df0a9c931bb9270529af54f5ddea6afbf55116162f6e2f54cf96294a0d993ed0"
+      "bytes": 1153,
+      "sha256": "788cbd0ef8db4ba6d0ba537dfb7e9252d3c406b35496d86a79afc94dc38e0e22"
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/notices/Manrope-OFL.txt",
@@ -43,13 +43,13 @@
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/screens.js",
-      "bytes": 5925,
-      "sha256": "aed16649ac92e5d4bf6db66a38f89520aba3f93f49d815c9cbd0ecb3b71d255b"
+      "bytes": 5927,
+      "sha256": "840822483c2646c182498b402845f4badfe3755ee7d3a4d7aacef9c41aad8f34"
     },
     {
       "path": "assets/alternatives/amex-enterprise/activity/steps.js",
-      "bytes": 16871,
-      "sha256": "40fd45c2d6e0c19257a0a153920d051e8724a62eccdf69d9f270d593f08ae66e"
+      "bytes": 17114,
+      "sha256": "b19787ad5614d20f8bfc15982bbe5edd48d382bedcddff85dd29affbbf9c92a8"
     },
     {
       "path": "assets/alternatives/amex-enterprise/explainer/explainer-web.mp4",

@@ -24,7 +24,7 @@
 export const ACTIVITY = {
   title: 'Your turn: push a Feature to Jira',
   intro: 'The Feature “Tokenized checkout” sits under the Strategic Epic “Payments Modernization”. Send it to Jira Cloud and check that the link works. This demo assumes an enabled integration, Feature-to-Epic mapping and PAY routing. Answer each step; you will see it happen on the screens.',
-  finish: 'Done. The Feature now lives in Jira as PAY-142, linked to Targetprocess, and future changes sync according to the enabled integration profile and filter rules.',
+  finish: 'Practice complete. In this simulation you pushed one Feature to Jira as a new Epic, linked another to an Epic that already existed, and checked where each link shows. In your real tools, what syncs depends on the enabled integration profile and filter rules.',
 };
 
 // the pictures (from assets/tool-screens/recreations/) and the spots on them, as fractions of the
@@ -141,7 +141,7 @@ export const STEPS = [
     ],
     clue: 'Look for the history of the issue: who created it, and from where.',
     hint: 'activity',
-    narration: 'In Jira, the Activity shows the issue was created from Targetprocess Feature 4121. The link works both ways.',
+    narration: 'In Jira, the Activity shows the issue was created from Targetprocess Feature 4121. That confirms where it came from.',
   },
   // ---------------- ROUND 2: your judgement (a different Feature, a different situation) ----------------
   // Draft wording by Claude, approved in principle by Lorne (2026-11-02); ChatGPT to refine.
@@ -211,8 +211,8 @@ export const JOURNEY = {
     title: 'Push a Feature to Jira',
     lede: 'Watch the steps. Practise the connection.',
     meta: ['About 10 minutes', '4 parts', 'Captions on'],
-    image: 'images/hero-room.jpg',
-    imageAlt: 'A bright American Express private office with a city view, a monitor and a laptop on the desk',
+    image: 'images/hero-workstation.jpg',   // rendered in the current room (PLAN's office, glass and adjoining desks)
+    imageAlt: 'A desk in a bright American Express office: a monitor showing Targetprocess and a laptop showing Jira, with the open-plan office beyond the glass',
     parts: [
       ['Watch', '3:57', 'The full film: how Strategic Epics, Features and Jira fit together.'],
       ['Explainer', '0:39', 'The exact steps you are about to do, in under a minute.'],
