@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Your turn: push a Feature to Jira · Amex ETS tools training</title>
+<!-- The "Your turn" activity. Words: steps.js · look: activity.css · behaviour: activity.js -->
+<!-- the look lives in activity.css; loaded this way so it works on any local server -->
+<script>fetch('activity.css').then(r => r.text()).then(css => { const s = document.createElement('style'); s.textContent = css; document.head.append(s); });</script>
+<script type="importmap">{"imports":{"three":"../../../../node_modules/three/build/three.module.js","three/addons/":"../../../../node_modules/three/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="view" aria-hidden="true"></div>
+
+<header class="brand">
+  <small>American Express · Enterprise Technology Services</small>
+  <strong id="title">Your turn</strong>
+</header>
+<div id="status" class="status" role="status"><span id="status-text">Loading the office…</span>
+  <span id="status-actions" class="row" hidden><button id="retry" class="primary">Try again</button><button id="back-to-start">Back to the start</button></span>
+</div>
+
+<!-- the half-screen panel: questions, feedback, clues -->
+<aside id="panel" class="panel" aria-label="Activity">
+  <div class="panel-top">
+    <span id="step-label" class="step-label">Your turn</span>
+    <div id="progress" class="progress" aria-hidden="true"></div>
+    <button id="sheet-toggle" class="sheet-toggle" aria-expanded="true" aria-controls="panel">Show the screen</button>
+  </div>
+
+  <section id="intro" class="intro">
+    <h1>Push a Feature to Jira</h1>
+    <p id="intro-text"></p>
+    <ul class="how">
+      <li><b>Choose</b> an answer and watch it happen on the screens.</li>
+      <li><b>Clue</b> gives a hint; press it again to see where to look.</li>
+      <li><b>Walk me through</b> does it for you, step by step.</li>
+      <li><b>Drag</b> to look around. Use Monitor and Laptop to switch screens.</li>
+    </ul>
+    <button id="begin" class="primary">Start</button>
+  </section>
+
+  <section class="step-body" hidden>
+    <p id="round-banner" class="round-banner" hidden></p>
+    <h2 id="question" class="question" tabindex="-1"></h2>
+    <div id="choices" class="choices" role="group" aria-label="Answers"></div>
+    <p id="clue-text" class="clue-text" hidden></p>
+    <div id="feedback" class="feedback" hidden>
+      <h3 id="feedback-title"></h3>
+      <p id="feedback-text"></p>
+      <div class="row">
+        <button id="try-again" class="primary">Try again</button>
+        <button id="continue" class="primary">Continue</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="finish" class="finish" hidden>
+    <h2 id="finish-title">Nicely done</h2>
+    <p id="finish-text"></p>
+    <p id="score" class="score"></p>
+    <div class="row">
+      <button id="restart" class="primary">Try it again</button>
+      <button id="rewatch">Watch the walkthrough</button>
+    </div>
+  </section>
+
+  <!-- the review: what has been learned -->
+  <section id="review" class="review" hidden>
+    <h2 id="review-title">What you learned</h2>
+    <ol id="review-points" class="review-points"></ol>
+    <div class="row">
+      <button id="review-film">Watch the full film again</button>
+      <button id="review-explainer">Replay the explainer</button>
+      <button id="review-again" class="primary">Try the activity again</button>
+    </div>
+  </section>
+
+  <div class="panel-tools step-body" hidden>
+    <button id="clue" title="Clue (C)">Clue</button>
+    <button id="walk">Walk me through</button>
+  </div>
+</aside>
+
+<!-- what is happening while an answer plays out -->
+<p id="watching" class="watching" hidden></p>
+
+<!-- camera -->
+<nav class="views" aria-label="Views">
+  <button id="go-monitor" aria-pressed="true">Monitor</button>
+  <button id="go-laptop" aria-pressed="false">Laptop</button>
+  <button id="go-room">Room</button>
+  <span class="drag-hint">Drag to look around</span>
+</nav>
+
+<!-- THE JOURNEY: film (landing) → explainer → your turn → review. The office loads behind it. -->
+<section id="journey" class="journey" aria-label="Training">
+  <ol id="stages" class="stages"></ol>
+  <!-- the cover: a website-style hero (words in steps.js › JOURNEY.landing) -->
+  <div id="landing" class="landing">
+    <img id="hero-image" class="hero-image" alt="">
+    <header class="hero-nav">
+      <img src="../../../logos/amex-bluebox-official.svg" alt="American Express" class="hero-logo">
+      <span id="hero-brand" class="hero-brand"></span>
+    </header>
+    <div class="hero-copy">
+      <p id="landing-eyebrow" class="eyebrow"></p>
+      <h1 id="landing-title"></h1>
+      <p id="landing-text" class="lede"></p>
+      <div class="row hero-actions">
+        <button id="start-film" class="primary hero-cta"><span class="play" aria-hidden="true"></span>Start the training</button>
+        <button id="skip-to-explainer" class="hero-secondary">Skip to the 39-second explainer</button>
+      </div>
+      <ul id="hero-meta" class="hero-meta" aria-label="About this training"></ul>
+    </div>
+    <ol id="hero-parts" class="hero-parts" aria-label="The four parts"></ol>
+    <p id="hero-footnote" class="hero-footnote"></p>
+  </div>
+  <div id="player" class="player" hidden>
+    <p id="player-note" class="player-note"></p>
+    <video id="journey-video" controls playsinline crossorigin="anonymous"></video>
+    <div class="row player-row">
+      <button id="journey-skip"></button>
+    </div>
+  </div>
+</section>
+
+<div id="announce" class="sr-only" aria-live="polite"></div>
+<script type="module" src="activity.js"></script>
+</body>
+</html>
